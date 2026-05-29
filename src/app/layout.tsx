@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, Inter, Noto_Serif_Sinhala } from 'next/font/google';
+import { Cormorant_Garamond, Inter, Noto_Sans_Sinhala } from 'next/font/google';
 import '@/styles/globals.css';
 
 const display = Cormorant_Garamond({
@@ -13,9 +13,9 @@ const body = Inter({
   variable: '--font-body',
 });
 
-const sinhala = Noto_Serif_Sinhala({
+const sinhala = Noto_Sans_Sinhala({
   subsets: ['sinhala'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '600'],
   variable: '--font-sinhala',
 });
 

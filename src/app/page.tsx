@@ -1,13 +1,12 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { IntroScreen } from '@/components/ui/IntroScreen';
+import { LandingScreen } from '@/components/ui/LandingScreen';
 import { Controls } from '@/components/ui/Controls';
 import { HintOverlay } from '@/components/ui/HintOverlay';
 import { LanternPanel } from '@/components/ui/LanternPanel';
 import { ClosingScreen } from '@/components/ui/ClosingScreen';
 import { AudioManager } from '@/components/ui/AudioManager';
-import { BrandSplash } from '@/components/ui/BrandSplash';
 import { SponsorMark } from '@/components/ui/SponsorMark';
 import { PerfHUD } from '@/components/ui/PerfHUD';
 
@@ -30,8 +29,7 @@ export default function HomePage() {
       <LanternPanel />
       <ClosingScreen />
       <AudioManager />
-      <IntroScreen />
-      <BrandSplash />
+      <LandingScreen />
       <SponsorMark />
       <PerfHUD />
     </main>

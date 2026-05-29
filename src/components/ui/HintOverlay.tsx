@@ -246,7 +246,7 @@ export function HintOverlay() {
             animate={FADE.animate}
             exit={FADE.exit}
             transition={FADE.transition}
-            className="control-pill absolute bottom-24 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 rounded-3xl px-5 py-3 md:bottom-28"
+            className="control-pill absolute bottom-44 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 rounded-3xl px-5 py-3 md:bottom-28"
           >
             <div className="text-xs uppercase tracking-widest text-flame-200/85">
               {controlsLabel}

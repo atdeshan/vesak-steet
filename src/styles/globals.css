@@ -10,6 +10,8 @@
     --flame-300: #f5d28a;
     --flame-500: #ffa244;
     --flame-600: #ff8533;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   html,
