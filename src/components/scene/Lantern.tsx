@@ -21,8 +21,6 @@ interface LanternProps {
   side: -1 | 1;
   focused: boolean;
   onSelect: (idx: number) => void;
-  /** Whether to load and play the actual video texture (perf optimization) */
-  loadVideo: boolean;
 }
 
 /**
@@ -37,7 +35,7 @@ interface LanternProps {
  * are rendered via InstancedMesh so each near lantern collapses ~90 draw calls
  * into a handful.
  */
-export function Lantern({ data, index, position, side, focused, onSelect, loadVideo }: LanternProps) {
+export function Lantern({ data, index, position, side, focused, onSelect }: LanternProps) {
   const groupRef = useRef<THREE.Group>(null);
   const spinnerRef = useRef<THREE.Group>(null);
   const haloInnerRef = useRef<THREE.Sprite>(null);
@@ -47,24 +45,17 @@ export function Lantern({ data, index, position, side, focused, onSelect, loadVi
   const settings = useQualitySettings();
   const FACETS = settings.lanternFacets;
 
-  // Disable per-mesh frustum culling on every Mesh/Sprite under this lantern.
-  // Three.js culls each child every camera move; with 100 lanterns × ~30
-  // meshes that's 3000+ checks per frame. We let the renderer draw any visible
-  // lantern's children unconditionally — fog/distance already hide them
-  // visually, and the cost of overdrawing far lanterns is tiny vs the cost of
-  // the cull checks while moving.
-  useEffect(() => {
-    if (!groupRef.current) return;
-    groupRef.current.traverse((obj) => {
-      if ((obj as THREE.Mesh).isMesh || (obj as THREE.Sprite).isSprite) {
-        obj.frustumCulled = false;
-      }
-    });
-  });
+  // TEMPORARY DIAGNOSTIC — counts Lantern re-renders. Remove after perf check.
+  const lanternRenderCount = useRef(0);
+  lanternRenderCount.current++;
+  if (lanternRenderCount.current > 5 && index === 0) {
+    // eslint-disable-next-line no-console
+    console.log(`[Lantern 0] render #${lanternRenderCount.current}`);
+  }
 
   const scale = SIZE_SCALE[data.size];
   const { tint, glow } = COLOR_PALETTE[data.color];
-  const glowTexture = getGlowTexture();
+  const glowTexture = useMemo(() => getGlowTexture(), []);
 
   const heightVariation = 0.85 + ((index * 0.13) % 0.4);
   const mainHeight = 4.5 * scale * heightVariation;
@@ -79,10 +70,11 @@ export function Lantern({ data, index, position, side, focused, onSelect, loadVi
   }, [data.size, index]);
 
   const [panelTexture, setPanelTexture] = useState<THREE.Texture>(() => makePanelTexture(index));
+  const [videoActive, setVideoActive] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    if (!loadVideo) return;
+    if (!videoActive) return;
 
     let cancelled = false;
     const { texture, video } = makeVideoTexture(`/lanterns/${data.video}`);
@@ -107,7 +99,7 @@ export function Lantern({ data, index, position, side, focused, onSelect, loadVi
       video.pause();
       video.src = '';
     };
-  }, [loadVideo, data.video]);
+  }, [videoActive, data.video]);
 
   const tiers = useMemo(() => {
     const tierCount = 3;
@@ -209,10 +201,11 @@ export function Lantern({ data, index, position, side, focused, onSelect, loadVi
       coreRef.current.material.opacity = focused ? 0.9 : 0.4;
     }
 
-    // LOD distance check is throttled — every 10th frame, staggered per
-    // lantern by index so we never check all 100 in the same frame.
+    // LOD distance check is throttled — every 30th frame (~2× per second at
+    // 60fps), staggered per lantern by index so we never check all 100 in the
+    // same frame. The video-load decision rides on this same gate.
     frameCounterRef.current++;
-    if ((frameCounterRef.current + index) % 10 !== 0) return;
+    if ((frameCounterRef.current + index) % 30 !== 0) return;
     const dx = state.camera.position.x - position[0];
     const dz = state.camera.position.z - position[2];
     const dist = Math.sqrt(dx * dx + dz * dz);
@@ -223,7 +216,26 @@ export function Lantern({ data, index, position, side, focused, onSelect, loadVi
       tierRef.current = next;
       setTier(next);
     }
+    if (!settings.loadVideos) {
+      if (videoActive) setVideoActive(false);
+    } else {
+      const shouldLoad = dist < settings.videoLoadDistance;
+      if (shouldLoad !== videoActive) setVideoActive(shouldLoad);
+    }
   });
+
+  // Re-disable per-mesh frustum culling whenever the LOD tier changes, since
+  // a tier transition spawns/destroys child meshes (seam posts, tassels,
+  // bulbs). Three.js would otherwise frustum-check each new mesh every camera
+  // move — and with 100 lanterns × ~30 meshes that's 3000+ checks per frame.
+  useEffect(() => {
+    if (!groupRef.current) return;
+    groupRef.current.traverse((obj) => {
+      if ((obj as THREE.Mesh).isMesh || (obj as THREE.Sprite).isSprite) {
+        obj.frustumCulled = false;
+      }
+    });
+  }, [tier]);
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
@@ -468,7 +480,7 @@ export function Lantern({ data, index, position, side, focused, onSelect, loadVi
             ))}
           </Instances>
           {bulbs.map((b, i) => (
-            <BulbGlow key={i} x={b.x} z={b.z} color={b.color} phase={b.phase} />
+            <BulbGlow key={i} x={b.x} z={b.z} color={b.color} />
           ))}
         </>
       )}
@@ -476,11 +488,11 @@ export function Lantern({ data, index, position, side, focused, onSelect, loadVi
   );
 }
 
-function BulbGlow({ x, z, color }: { x: number; z: number; color: number; phase: number }) {
+function BulbGlow({ x, z, color }: { x: number; z: number; color: number }) {
   // Per-bulb pulse was previously animated via useFrame (1200+ callbacks per
   // frame across all near lanterns). Static opacity reads identically against
   // the LED canopy and skips that entire per-frame cost.
-  const glowTexture = getGlowTexture();
+  const glowTexture = useMemo(() => getGlowTexture(), []);
   return (
     <sprite position={[x, 0.85, z]} scale={[0.5, 0.5, 1]}>
       <spriteMaterial

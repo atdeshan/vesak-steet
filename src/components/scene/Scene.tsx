@@ -1,7 +1,7 @@
 'use client';
 
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Suspense, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Suspense, useMemo, useRef } from 'react';
 import { Environment } from './Environment';
 import { WalkingCamera } from './WalkingCamera';
 import { Lantern } from './Lantern';
@@ -14,24 +14,6 @@ import { useAppStore, STREET_LENGTH } from '@/lib/store';
 import { useQualitySettings } from '@/lib/quality';
 import { usePerfStore } from '@/lib/perfStore';
 import { SIZE_SCALE } from '@/data/types';
-
-/**
- * Dev-only: logs renderer.info.render.calls every ~1s so we can verify the
- * LOD + instancing work. Safe to remove once perf is dialed in.
- */
-function DrawCallLogger() {
-  const gl = useThree((s) => s.gl);
-  const lastLogRef = useRef(0);
-  useFrame(({ clock }) => {
-    const now = clock.elapsedTime;
-    if (now - lastLogRef.current > 1) {
-      lastLogRef.current = now;
-      // eslint-disable-next-line no-console
-      console.log(`[vesak] draw calls: ${gl.info.render.calls}, triangles: ${gl.info.render.triangles}`);
-    }
-  });
-  return null;
-}
 
 /**
  * Computes lantern positions along the street.
@@ -72,11 +54,18 @@ function getLanternPositions() {
 export function Scene() {
   const focusedLanternIdx = useAppStore((s) => s.focusedLanternIdx);
   const focusLantern = useAppStore((s) => s.focusLantern);
-  const position = useAppStore((s) => s.position);
   const settings = useQualitySettings();
   const perfHudVisible = usePerfStore((s) => s.visible);
 
-  const lanternPositions = getLanternPositions();
+  // TEMPORARY DIAGNOSTIC — counts Scene re-renders. Remove after perf check.
+  const sceneRenderCount = useRef(0);
+  sceneRenderCount.current++;
+  if (sceneRenderCount.current % 30 === 0) {
+    // eslint-disable-next-line no-console
+    console.log('[Scene] renders so far:', sceneRenderCount.current);
+  }
+
+  const lanternPositions = useMemo(() => getLanternPositions(), []);
 
   return (
     <Canvas
@@ -86,7 +75,6 @@ export function Scene() {
       style={{ background: '#050308' }}
     >
       <Suspense fallback={null}>
-        <DrawCallLogger />
         <StartupLog />
         {perfHudVisible && <PerfHudSampler />}
         <Environment />
@@ -94,23 +82,17 @@ export function Scene() {
         <StreetLights />
         <WalkingCamera />
 
-        {lanternPositions.map(({ position: pos, side, data, index }) => {
-          const distance = Math.abs(pos[2] - (-position));
-          const shouldLoadVideo = settings.loadVideos && distance < settings.videoLoadDistance;
-
-          return (
-            <Lantern
-              key={data.id}
-              data={data}
-              index={index}
-              position={pos}
-              side={side}
-              focused={focusedLanternIdx === index}
-              onSelect={focusLantern}
-              loadVideo={shouldLoadVideo}
-            />
-          );
-        })}
+        {lanternPositions.map(({ position: pos, side, data, index }) => (
+          <Lantern
+            key={data.id}
+            data={data}
+            index={index}
+            position={pos}
+            side={side}
+            focused={focusedLanternIdx === index}
+            onSelect={focusLantern}
+          />
+        ))}
       </Suspense>
     </Canvas>
   );
