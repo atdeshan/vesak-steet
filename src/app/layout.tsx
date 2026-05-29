@@ -1,0 +1,54 @@
+import type { Metadata, Viewport } from 'next';
+import { Cormorant_Garamond, Inter, Noto_Serif_Sinhala } from 'next/font/google';
+import '@/styles/globals.css';
+
+const display = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500'],
+  variable: '--font-display',
+});
+
+const body = Inter({
+  subsets: ['latin'],
+  variable: '--font-body',
+});
+
+const sinhala = Noto_Serif_Sinhala({
+  subsets: ['sinhala'],
+  weight: ['400', '500'],
+  variable: '--font-sinhala',
+});
+
+export const metadata: Metadata = {
+  title: 'Vesak Street · Lanterns of Colombo',
+  description: 'A virtual walk through the Vesak lantern displays of Colombo, Sri Lanka. Experience the lights, stories, and atmosphere of one of the most beautiful Buddhist festivals in the world.',
+  metadataBase: new URL('https://vesakstreet.com'),
+  openGraph: {
+    title: 'Vesak Street · Lanterns of Colombo',
+    description: 'A virtual walk through the Vesak lantern displays of Colombo, Sri Lanka.',
+    images: ['/og-image.jpg'],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Vesak Street · Lanterns of Colombo',
+    description: 'A virtual walk through the Vesak lantern displays of Colombo, Sri Lanka.',
+    images: ['/og-image.jpg'],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#050308',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={`${display.variable} ${body.variable} ${sinhala.variable}`}>
+      <body>{children}</body>
+    </html>
+  );
+}

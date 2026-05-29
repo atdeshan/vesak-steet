@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --night: #050308;
+    --night-50: #1a1428;
+    --flame-200: #ffeebb;
+    --flame-300: #f5d28a;
+    --flame-500: #ffa244;
+    --flame-600: #ff8533;
+  }
+
+  html {
+    background: var(--night);
+    color: var(--flame-200);
+    overscroll-behavior: none;
+  }
+
+  body {
+    background: var(--night);
+    color: var(--flame-200);
+    font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Disable text selection on UI chrome */
+  .ui-chrome {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Custom scrollbar for panel */
+  .panel-scroll::-webkit-scrollbar {
+    width: 4px;
+  }
+  .panel-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .panel-scroll::-webkit-scrollbar-thumb {
+    background: rgba(245, 210, 138, 0.2);
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  .panel-glass {
+    background: rgba(10, 6, 18, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-left: 0.5px solid rgba(245, 200, 120, 0.2);
+  }
+
+  .control-pill {
+    background: rgba(10, 6, 18, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 0.5px solid rgba(245, 200, 120, 0.18);
+  }
+
+  .btn-flame {
+    @apply text-flame-300 border border-flame-300/25 bg-transparent
+           transition-all duration-200 rounded-full
+           hover:bg-flame-300/[0.12];
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .btn-flame.active {
+    @apply bg-flame-300/20 border-flame-300/50;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
