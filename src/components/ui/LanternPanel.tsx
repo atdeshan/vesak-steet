@@ -47,6 +47,7 @@ export function LanternPanel() {
         <motion.aside
           className="panel-glass panel-scroll fixed top-0 right-0 bottom-0 z-40
                      w-full sm:w-[360px] md:w-[400px] overflow-y-auto"
+          style={{ touchAction: 'pan-y' }}
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
           exit={{ x: '100%' }}

@@ -72,7 +72,7 @@ export function Scene() {
       camera={{ position: [0, 2.2, 0], fov: 72, near: 0.1, far: 300 }}
       dpr={[1, settings.pixelRatioCap]}
       gl={{ antialias: settings.antialias, alpha: true, powerPreference: 'high-performance' }}
-      style={{ background: '#050308' }}
+      style={{ background: '#050308', touchAction: 'none' }}
     >
       <Suspense fallback={null}>
         <StartupLog />
