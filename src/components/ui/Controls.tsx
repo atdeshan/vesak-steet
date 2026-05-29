@@ -33,7 +33,7 @@ export function Controls() {
           <img
             src="/logo/budda%20rashmi%20logo.png"
             alt="Buddha Rashmi"
-            className="h-28 w-auto object-contain md:h-44"
+            className="h-12 w-auto object-contain md:h-24 lg:h-44"
           />
           <div>
             <div className="text-xs md:text-sm text-flame-200/75 tracking-widest uppercase">
@@ -47,7 +47,7 @@ export function Controls() {
 
         {/* Mode toggle — top center */}
         <motion.div
-          className="pointer-events-auto flex gap-1 p-1 rounded-full control-pill absolute left-1/2 -translate-x-1/2"
+          className="pointer-events-auto hidden gap-1 p-1 rounded-full control-pill absolute left-1/2 -translate-x-1/2 lg:flex"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -87,7 +87,7 @@ export function Controls() {
           <img
             src="/logo/Ganagarama%20Logo.png"
             alt="Gangaramaya"
-            className="h-20 w-auto object-contain md:h-32"
+            className="h-10 w-auto object-contain md:h-16 lg:h-32"
           />
         </motion.div>
       </div>
@@ -97,7 +97,7 @@ export function Controls() {
         {mode === 'auto' && (
           <motion.div
             key="auto-controls"
-            className="ui-chrome pointer-events-auto absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30
+            className="ui-chrome pointer-events-auto absolute bottom-4 md:bottom-6 left-4 md:left-6 z-30 lg:left-1/2 lg:-translate-x-1/2
                        flex items-center gap-1 p-1.5 rounded-full control-pill"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -141,7 +141,7 @@ export function Controls() {
         {mode === 'manual' && (
           <motion.div
             key="manual-controls"
-            className="ui-chrome pointer-events-auto absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30
+            className="ui-chrome pointer-events-auto absolute bottom-4 md:bottom-6 left-4 md:left-6 z-30 lg:left-1/2 lg:-translate-x-1/2
                        flex items-center gap-1 p-1.5 rounded-full control-pill"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

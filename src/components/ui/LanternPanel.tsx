@@ -6,6 +6,7 @@ import { useAppStore } from '@/lib/store';
 import { useStrings } from '@/lib/i18n';
 import { LANTERNS } from '@/data/lanterns';
 import { COLOR_PALETTE } from '@/data/types';
+import { getVideoUrl } from '@/lib/config';
 
 /**
  * Side panel shown when a lantern is clicked.
@@ -93,7 +94,7 @@ export function LanternPanel() {
                             flex items-center justify-center">
               <video
                 ref={videoRef}
-                src={`/lanterns/${lantern.video}`}
+                src={getVideoUrl(lantern.video)}
                 className="w-full h-full object-cover"
                 playsInline
                 muted

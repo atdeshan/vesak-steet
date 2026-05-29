@@ -83,8 +83,8 @@ export function PerfHUD() {
 
   return (
     <div
-      className="ui-chrome pointer-events-auto fixed bottom-2 left-2 z-[100] rounded-md bg-black/80 p-2 font-mono text-[10px] leading-tight text-flame-200/90 shadow-lg backdrop-blur-sm"
-      style={{ minWidth: 168 }}
+      className="ui-chrome pointer-events-auto fixed top-2 left-2 z-[100] rounded-md bg-black/80 p-2 font-mono text-[9px] leading-tight text-flame-200/90 shadow-lg backdrop-blur-sm md:top-auto md:bottom-2 md:text-[10px]"
+      style={{ minWidth: 160 }}
     >
       <div className="mb-1 flex items-center justify-between gap-3 border-b border-flame-300/15 pb-1">
         <span className="font-bold uppercase tracking-wider text-flame-300/80">Perf</span>

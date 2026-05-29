@@ -24,7 +24,7 @@ export function SponsorMark() {
           transition={{ duration: 0.8, delay: 0.4, ease: EASE }}
         >
           <div
-            className="text-base tracking-wider text-flame-200/75 md:text-lg"
+            className="text-[11px] tracking-wider text-flame-200/75 lg:text-lg"
             style={{ fontFamily: 'var(--font-sinhala), serif' }}
           >
             ප්‍රදාන අනුග්‍රහය
@@ -33,7 +33,7 @@ export function SponsorMark() {
           <img
             src="/logo/Commercial_Bank_logo.svg"
             alt="Commercial Bank of Ceylon"
-            className="h-14 w-auto object-contain opacity-90 md:h-20"
+            className="h-7 w-auto object-contain opacity-90 lg:h-20"
           />
         </motion.div>
       )}

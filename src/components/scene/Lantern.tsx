@@ -11,6 +11,7 @@ import {
   makeVideoTexture,
 } from '@/lib/textures';
 import { useQualitySettings } from '@/lib/quality';
+import { getVideoUrl } from '@/lib/config';
 
 type DetailTier = 'near' | 'mid' | 'far';
 
@@ -77,7 +78,7 @@ export function Lantern({ data, index, position, side, focused, onSelect }: Lant
     if (!videoActive) return;
 
     let cancelled = false;
-    const { texture, video } = makeVideoTexture(`/lanterns/${data.video}`);
+    const { texture, video } = makeVideoTexture(getVideoUrl(data.video));
     videoRef.current = video;
 
     const onCanPlay = () => {
