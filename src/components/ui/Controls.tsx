@@ -35,7 +35,7 @@ export function Controls() {
           <img
             src="/logo/budda%20rashmi%20logo.png"
             alt="Buddha Rashmi"
-            className="h-8 w-auto object-contain shrink-0 md:h-12 lg:h-44"
+            className="h-10 w-auto object-contain shrink-0 md:h-12 lg:h-44"
           />
           {/* Mobile title — compact one-liner */}
           <div className="min-w-0 md:hidden">
@@ -88,8 +88,14 @@ export function Controls() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          {/* Mobile: settings drawer trigger only */}
-          <div className="md:hidden">
+          {/* Mobile: Gangaramaya logo + settings drawer trigger */}
+          <div className="flex items-center gap-2 md:hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo/Ganagarama%20Logo.png"
+              alt="Gangaramaya"
+              className="h-10 w-auto object-contain"
+            />
             <MobileSettingsDrawer />
           </div>
           {/* Desktop: full inline cluster */}
@@ -129,10 +135,13 @@ export function Controls() {
             >
               ප්‍රදාන අනුග්‍රහය
             </div>
-            <div className="bg-[#003d7a] rounded-md px-4 py-1.5 flex items-center gap-2 shadow-lg">
-              <span className="text-white text-[11px] font-semibold tracking-wider">
-                COMMERCIAL BANK
-              </span>
+            <div className="bg-white rounded-md px-4 py-2 flex items-center justify-center shadow-lg">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo/Commercial_Bank_logo.svg"
+                alt="Commercial Bank of Ceylon"
+                className="h-7 w-auto object-contain"
+              />
             </div>
           </div>
         </div>
