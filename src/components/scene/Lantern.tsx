@@ -264,8 +264,15 @@ export function Lantern({ data, index, position, side, focused, onSelect }: Lant
           {/* Plinth gold band — at the top edge, slightly outside the plinth's
               top radius (open-ended so the flat top face doesn't read as a disc). */}
           <mesh position={[0, 0.78, 0]}>
-            <cylinderGeometry args={[mainRadius * 1.42, mainRadius * 1.42, 0.06, FACETS, 1, true]} />
-            <meshBasicMaterial color={0xc89048} toneMapped={false} side={THREE.DoubleSide} />
+            <cylinderGeometry args={[mainRadius * 1.43, mainRadius * 1.43, 0.06, FACETS, 1, true]} />
+            <meshBasicMaterial
+              color={0xc89048}
+              toneMapped={false}
+              side={THREE.DoubleSide}
+              polygonOffset
+              polygonOffsetFactor={-1}
+              polygonOffsetUnits={-1}
+            />
           </mesh>
         </>
       )}
@@ -291,9 +298,15 @@ export function Lantern({ data, index, position, side, focused, onSelect }: Lant
               <coneGeometry args={[mainRadius * 1.2, mainHeight * 0.16, FACETS]} />
               <meshBasicMaterial color={0x3a2410} toneMapped={false} />
             </mesh>
-            <mesh position={[0, mainHeight / 2, 0]} rotation={[Math.PI / 2, 0, 0]}>
-              <torusGeometry args={[mainRadius * 1.2, 0.05 * scale, 6, FACETS]} />
-              <meshBasicMaterial color={0xf5d28a} toneMapped={false} />
+            <mesh position={[0, mainHeight / 2 + 0.005, 0]} rotation={[Math.PI / 2, 0, 0]}>
+              <torusGeometry args={[mainRadius * 1.205, 0.05 * scale, 6, FACETS]} />
+              <meshBasicMaterial
+                color={0xf5d28a}
+                toneMapped={false}
+                polygonOffset
+                polygonOffsetFactor={-1}
+                polygonOffsetUnits={-1}
+              />
             </mesh>
             <mesh position={[0, mainHeight / 2 + mainHeight * 0.18, 0]}>
               <coneGeometry args={[mainRadius * 0.7, mainHeight * 0.1, FACETS]} />
@@ -333,8 +346,14 @@ export function Lantern({ data, index, position, side, focused, onSelect }: Lant
                 position={[0, t.y + t.height / 2, 0]}
                 rotation={[Math.PI / 2, 0, 0]}
               >
-                <torusGeometry args={[t.radius, 0.04 * scale, 6, FACETS]} />
-                <meshBasicMaterial color={0xf5d28a} toneMapped={false} />
+                <torusGeometry args={[t.radius * 1.005, 0.04 * scale, 6, FACETS]} />
+                <meshBasicMaterial
+                  color={0xf5d28a}
+                  toneMapped={false}
+                  polygonOffset
+                  polygonOffsetFactor={-1}
+                  polygonOffsetUnits={-1}
+                />
               </mesh>
             )}
 
@@ -343,17 +362,28 @@ export function Lantern({ data, index, position, side, focused, onSelect }: Lant
               <>
                 <mesh position={[0, t.gapY, 0]}>
                   <cylinderGeometry
-                    args={[t.radius * 1.05, t.radius * 1.05, t.tierGap * 1.5, FACETS]}
+                    args={[t.radius * 1.07, t.radius * 1.07, t.tierGap * 1.5, FACETS]}
                   />
-                  <meshBasicMaterial color={0x2a1a08} />
+                  <meshBasicMaterial
+                    color={0x2a1a08}
+                    polygonOffset
+                    polygonOffsetFactor={-1}
+                    polygonOffsetUnits={-1}
+                  />
                 </mesh>
                 {settings.showTierBands && (
                   <mesh
                     position={[0, t.gapY + t.tierGap * 0.75, 0]}
                     rotation={[Math.PI / 2, 0, 0]}
                   >
-                    <torusGeometry args={[t.radius * 1.04, 0.025 * scale, 6, FACETS]} />
-                    <meshBasicMaterial color={0xf5d28a} toneMapped={false} />
+                    <torusGeometry args={[t.radius * 1.085, 0.025 * scale, 6, FACETS]} />
+                    <meshBasicMaterial
+                      color={0xf5d28a}
+                      toneMapped={false}
+                      polygonOffset
+                      polygonOffsetFactor={-2}
+                      polygonOffsetUnits={-2}
+                    />
                   </mesh>
                 )}
               </>

@@ -70,7 +70,7 @@ export const useAppStore = create<AppState>((set) => ({
   audioEnabled: false,
   language: 'en',
   phase: 'presents',
-  quality: 'high',
+  quality: 'medium',
   qualityAutoDetected: false,
   introComplete: false,
 

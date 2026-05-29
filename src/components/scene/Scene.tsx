@@ -9,6 +9,7 @@ import { Decorations, BUNTING_POLE_ZS } from './Decorations';
 import { StreetLights } from './StreetLights';
 import { PerfHudSampler } from './PerfHudSampler';
 import { StartupLog } from './StartupLog';
+import { ConnectionDetector } from '@/components/ui/ConnectionDetector';
 import { LANTERNS } from '@/data/lanterns';
 import { useAppStore, STREET_LENGTH } from '@/lib/store';
 import { useQualitySettings } from '@/lib/quality';
@@ -76,6 +77,7 @@ export function Scene() {
     >
       <Suspense fallback={null}>
         <StartupLog />
+        <ConnectionDetector />
         {perfHudVisible && <PerfHudSampler />}
         <Environment />
         <Decorations />

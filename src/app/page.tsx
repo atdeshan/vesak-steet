@@ -7,7 +7,6 @@ import { HintOverlay } from '@/components/ui/HintOverlay';
 import { LanternPanel } from '@/components/ui/LanternPanel';
 import { ClosingScreen } from '@/components/ui/ClosingScreen';
 import { AudioManager } from '@/components/ui/AudioManager';
-import { ConnectionDetector } from '@/components/ui/ConnectionDetector';
 import { BrandSplash } from '@/components/ui/BrandSplash';
 import { SponsorMark } from '@/components/ui/SponsorMark';
 import { PerfHUD } from '@/components/ui/PerfHUD';
@@ -31,7 +30,6 @@ export default function HomePage() {
       <LanternPanel />
       <ClosingScreen />
       <AudioManager />
-      <ConnectionDetector />
       <IntroScreen />
       <BrandSplash />
       <SponsorMark />
