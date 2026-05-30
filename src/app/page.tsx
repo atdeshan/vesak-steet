@@ -6,7 +6,7 @@ import { Controls } from '@/components/ui/Controls';
 import { HintOverlay } from '@/components/ui/HintOverlay';
 import { LanternPanel } from '@/components/ui/LanternPanel';
 import { ClosingScreen } from '@/components/ui/ClosingScreen';
-import { AudioManager } from '@/components/ui/AudioManager';
+import { AmbientMusicPlayer } from '@/components/ui/AmbientMusicPlayer';
 import { SponsorMark } from '@/components/ui/SponsorMark';
 import { PerfHUD } from '@/components/ui/PerfHUD';
 
@@ -28,7 +28,7 @@ export default function HomePage() {
       <HintOverlay />
       <LanternPanel />
       <ClosingScreen />
-      <AudioManager />
+      <AmbientMusicPlayer />
       <LandingScreen />
       <SponsorMark />
       <PerfHUD />

@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useMemo, useRef } from 'react';
+import { Suspense, useMemo } from 'react';
 import { Environment } from './Environment';
 import { WalkingCamera } from './WalkingCamera';
 import { Lantern } from './Lantern';
@@ -57,14 +57,6 @@ export function Scene() {
   const focusLantern = useAppStore((s) => s.focusLantern);
   const settings = useQualitySettings();
   const perfHudVisible = usePerfStore((s) => s.visible);
-
-  // TEMPORARY DIAGNOSTIC — counts Scene re-renders. Remove after perf check.
-  const sceneRenderCount = useRef(0);
-  sceneRenderCount.current++;
-  if (sceneRenderCount.current % 30 === 0) {
-    // eslint-disable-next-line no-console
-    console.log('[Scene] renders so far:', sceneRenderCount.current);
-  }
 
   const lanternPositions = useMemo(() => getLanternPositions(), []);
 

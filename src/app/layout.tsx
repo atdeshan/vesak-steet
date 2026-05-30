@@ -1,3 +1,5 @@
+// TODO: Optimize /public/logo/budda rashmi logo.png — currently 1.8MB.
+// Use https://tinypng.com to compress in place. Target: 150-300KB.
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Inter, Noto_Sans_Sinhala } from 'next/font/google';
 import '@/styles/globals.css';
@@ -26,14 +28,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Vesak Street · Lanterns of Colombo',
     description: 'A virtual walk through the Vesak lantern displays of Colombo, Sri Lanka.',
-    images: ['/og-image.jpg'],
+    images: ['/opengraph-image'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Vesak Street · Lanterns of Colombo',
     description: 'A virtual walk through the Vesak lantern displays of Colombo, Sri Lanka.',
-    images: ['/og-image.jpg'],
+    images: ['/opengraph-image'],
   },
 };
 

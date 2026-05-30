@@ -26,12 +26,17 @@ type VerticalKind = 'combank' | 'buddhist';
 // nearest same-side lantern (lanterns are 4.798 units apart and alternate
 // sides, so same-side spacing is ~9.6 units).
 const VERTICAL_BANNERS: { z: number; side: -1 | 1; kind: VerticalKind }[] = [
-  { z:  -55, side: -1, kind: 'combank'  },
-  { z: -127, side:  1, kind: 'buddhist' },
-  { z: -208, side: -1, kind: 'combank'  },
-  { z: -308, side:  1, kind: 'combank'  },
-  { z: -390, side: -1, kind: 'buddhist' },
-  { z: -463, side:  1, kind: 'combank'  },
+  { z:  -22, side:  1, kind: 'buddhist' },
+  { z:  -65, side: -1, kind: 'buddhist' },
+  { z: -117, side:  1, kind: 'combank'  },
+  { z: -160, side: -1, kind: 'buddhist' },
+  { z: -204, side:  1, kind: 'buddhist' },
+  { z: -247, side: -1, kind: 'combank'  },
+  { z: -300, side:  1, kind: 'buddhist' },
+  { z: -343, side: -1, kind: 'buddhist' },
+  { z: -386, side:  1, kind: 'combank'  },
+  { z: -439, side: -1, kind: 'buddhist' },
+  { z: -482, side:  1, kind: 'buddhist' },
 ];
 
 // Bunting Z values pre-nudged to fall mid-gap between adjacent lanterns

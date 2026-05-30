@@ -133,7 +133,7 @@ export function Controls() {
               className="text-[10px] uppercase tracking-wider text-flame-200/70"
               style={{ fontFamily: 'var(--font-sinhala), serif' }}
             >
-              ප්‍රදාන අනුග්‍රහය
+              ප්‍රධාන අනුග්‍රහය
             </div>
             <div className="bg-white rounded-md px-4 py-2 flex items-center justify-center shadow-lg">
               {/* eslint-disable-next-line @next/next/no-img-element */}

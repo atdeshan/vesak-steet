@@ -46,14 +46,6 @@ export function Lantern({ data, index, position, side, focused, onSelect }: Lant
   const settings = useQualitySettings();
   const FACETS = settings.lanternFacets;
 
-  // TEMPORARY DIAGNOSTIC — counts Lantern re-renders. Remove after perf check.
-  const lanternRenderCount = useRef(0);
-  lanternRenderCount.current++;
-  if (lanternRenderCount.current > 5 && index === 0) {
-    // eslint-disable-next-line no-console
-    console.log(`[Lantern 0] render #${lanternRenderCount.current}`);
-  }
-
   const scale = SIZE_SCALE[data.size];
   const { tint, glow } = COLOR_PALETTE[data.color];
   const glowTexture = useMemo(() => getGlowTexture(), []);
@@ -207,6 +199,18 @@ export function Lantern({ data, index, position, side, focused, onSelect }: Lant
     // same frame. The video-load decision rides on this same gate.
     frameCounterRef.current++;
     if ((frameCounterRef.current + index) % 30 !== 0) return;
+
+    // Disable frustum culling on all children — runs after tier-driven mesh
+    // remounts have committed, so newly-added meshes are caught. Throttled
+    // (every 30 frames per lantern, staggered by index).
+    if (groupRef.current) {
+      groupRef.current.traverse((obj) => {
+        if ((obj as THREE.Mesh).isMesh || (obj as THREE.Sprite).isSprite) {
+          obj.frustumCulled = false;
+        }
+      });
+    }
+
     const dx = state.camera.position.x - position[0];
     const dz = state.camera.position.z - position[2];
     const dist = Math.sqrt(dx * dx + dz * dz);
@@ -224,19 +228,6 @@ export function Lantern({ data, index, position, side, focused, onSelect }: Lant
       if (shouldLoad !== videoActive) setVideoActive(shouldLoad);
     }
   });
-
-  // Re-disable per-mesh frustum culling whenever the LOD tier changes, since
-  // a tier transition spawns/destroys child meshes (seam posts, tassels,
-  // bulbs). Three.js would otherwise frustum-check each new mesh every camera
-  // move — and with 100 lanterns × ~30 meshes that's 3000+ checks per frame.
-  useEffect(() => {
-    if (!groupRef.current) return;
-    groupRef.current.traverse((obj) => {
-      if ((obj as THREE.Mesh).isMesh || (obj as THREE.Sprite).isSprite) {
-        obj.frustumCulled = false;
-      }
-    });
-  }, [tier]);
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();

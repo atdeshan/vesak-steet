@@ -27,7 +27,7 @@ export function SponsorMark() {
             className="text-[11px] tracking-wider text-flame-200/75 lg:text-lg"
             style={{ fontFamily: 'var(--font-sinhala), serif' }}
           >
-            ප්‍රදාන අනුග්‍රහය
+            ප්‍රධාන අනුග්‍රහය
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
