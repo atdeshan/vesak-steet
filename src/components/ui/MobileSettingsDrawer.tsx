@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAppStore } from '@/lib/store';
-import type { Language, QualityLevel, Mode } from '@/lib/store';
+import type { Language, QualityLevel } from '@/lib/store';
 
 /* ─── Inline SVG icons (matches the existing HintOverlay inline pattern) ── */
 
@@ -83,7 +83,6 @@ function VolumeOffIcon({ className = 'h-5 w-5' }: { className?: string }) {
 /* ─── Settings drawer ────────────────────────────────────────────────── */
 
 const QUALITY_OPTIONS: QualityLevel[] = ['low', 'medium', 'high'];
-const MODE_OPTIONS: Mode[] = ['auto', 'manual'];
 const LANGUAGE_OPTIONS: [Language, string][] = [
   ['en', 'EN'],
   ['si', 'සි'],
@@ -108,8 +107,6 @@ export function MobileSettingsDrawer() {
 
   const quality = useAppStore((s) => s.quality);
   const setQuality = useAppStore((s) => s.setQuality);
-  const mode = useAppStore((s) => s.mode);
-  const setMode = useAppStore((s) => s.setMode);
   const audioEnabled = useAppStore((s) => s.audioEnabled);
   const toggleAudio = useAppStore((s) => s.toggleAudio);
   const language = useAppStore((s) => s.language);
@@ -210,28 +207,6 @@ export function MobileSettingsDrawer() {
                         }`}
                       >
                         {q === 'medium' ? 'Med' : q}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Walk mode */}
-                <div>
-                  <label className="mb-2 block text-xs uppercase tracking-wider text-flame-200/60">
-                    Walk Mode
-                  </label>
-                  <div className="flex gap-1 rounded-full bg-black/40 p-1">
-                    {MODE_OPTIONS.map((m) => (
-                      <button
-                        key={m}
-                        onClick={() => setMode(m)}
-                        className={`min-h-[44px] flex-1 rounded-full px-3 py-2.5 text-xs uppercase tracking-wide ${
-                          mode === m
-                            ? 'bg-flame-300/20 text-flame-200'
-                            : 'text-flame-200/60'
-                        }`}
-                      >
-                        {m}
                       </button>
                     ))}
                   </div>
