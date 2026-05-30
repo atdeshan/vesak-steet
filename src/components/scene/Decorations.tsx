@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
 import { Instances, Instance } from '@react-three/drei';
 import * as THREE from 'three';
 import { useQualitySettings } from '@/lib/quality';
@@ -22,22 +21,38 @@ const BANNER_HEIGHT = 2.2;
 
 type VerticalKind = 'combank' | 'buddhist';
 
-// Z values are pre-nudged to keep at least 4 units of clearance from the
-// nearest same-side lantern (lanterns are 4.798 units apart and alternate
-// sides, so same-side spacing is ~9.6 units).
-const VERTICAL_BANNERS: { z: number; side: -1 | 1; kind: VerticalKind }[] = [
-  { z:  -22, side:  1, kind: 'buddhist' },
-  { z:  -65, side: -1, kind: 'buddhist' },
-  { z: -117, side:  1, kind: 'combank'  },
-  { z: -160, side: -1, kind: 'buddhist' },
-  { z: -204, side:  1, kind: 'buddhist' },
-  { z: -247, side: -1, kind: 'combank'  },
-  { z: -300, side:  1, kind: 'buddhist' },
-  { z: -343, side: -1, kind: 'buddhist' },
-  { z: -386, side:  1, kind: 'combank'  },
-  { z: -439, side: -1, kind: 'buddhist' },
-  { z: -482, side:  1, kind: 'buddhist' },
+// Each location gets a TRIO of flags in this order, centered on the location's z.
+const FLAG_PATTERN: VerticalKind[] = ['buddhist', 'combank', 'buddhist'];
+const FLAG_GROUP_SPACING_Z = 2.8; // gap between adjacent flags within a trio
+
+// Z values are pre-nudged to keep clearance from the nearest same-side
+// lantern (lanterns are 4.798 units apart and alternate sides, so same-side
+// spacing is ~9.6 units). Each entry below produces 3 flags via FLAG_PATTERN,
+// clustered around its z with FLAG_GROUP_SPACING_Z apart.
+const FLAG_GROUP_LOCATIONS: { z: number; side: -1 | 1 }[] = [
+  { z:  -22, side:  1 },
+  { z:  -65, side: -1 },
+  { z: -117, side:  1 },
+  { z: -160, side: -1 },
+  { z: -204, side:  1 },
+  { z: -247, side: -1 },
+  { z: -300, side:  1 },
+  { z: -343, side: -1 },
+  { z: -386, side:  1 },
+  { z: -439, side: -1 },
+  { z: -482, side:  1 },
 ];
+
+// Flattened per-flag list — every renderer below iterates this. Three flags
+// per location, centered on each location's z (offset = (i - 1) * spacing).
+const VERTICAL_BANNERS: { z: number; side: -1 | 1; kind: VerticalKind }[] =
+  FLAG_GROUP_LOCATIONS.flatMap((loc) =>
+    FLAG_PATTERN.map((kind, i) => ({
+      z: loc.z + (i - (FLAG_PATTERN.length - 1) / 2) * FLAG_GROUP_SPACING_Z,
+      side: loc.side,
+      kind,
+    })),
+  );
 
 // Bunting Z values pre-nudged to fall mid-gap between adjacent lanterns
 // (lanterns are 4.798 units apart; these sit ~2.4 units from either neighbour
@@ -65,70 +80,22 @@ const BUNTING_COLORS: number[] = [
   0xe8f0fa, // soft pale blue (almost white)
 ];
 
-/* ─── Wave shader ─────────────────────────────────────────────────────── */
+/* ─── Flat banner ─────────────────────────────────────────────────────── */
 
-const WAVE_VERTEX = /* glsl */`
-  uniform float uTime;
-  uniform float uAmplitude;
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    vec3 pos = position;
-    // uv.y = 1.0 at top (anchored), 0.0 at bottom (free)
-    float anchor = uv.y;
-    float wave = sin(pos.y * 0.5 + uTime * 1.5 + pos.x * 0.3) * uAmplitude * (1.0 - anchor);
-    pos.z += wave;
-    pos.x += wave * 0.3;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-  }
-`;
-
-const WAVE_FRAGMENT = /* glsl */`
-  uniform sampler2D uMap;
-  varying vec2 vUv;
-  void main() {
-    gl_FragColor = texture2D(uMap, vUv);
-  }
-`;
-
-function WaveBanner({
+// Client agreed to keep banners flat (no wave / swing).
+function FlatBanner({
   position,
   size,
   texture,
-  amplitude,
 }: {
   position: [number, number, number];
   size: [number, number];
   texture: THREE.Texture;
-  amplitude: number;
 }) {
-  const matRef = useRef<THREE.ShaderMaterial>(null);
-
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uMap: { value: texture },
-      uAmplitude: { value: amplitude },
-    }),
-    [texture, amplitude],
-  );
-
-  useFrame(({ clock }) => {
-    if (matRef.current) {
-      matRef.current.uniforms.uTime.value = clock.elapsedTime;
-    }
-  });
-
   return (
     <mesh position={position} raycast={() => null}>
-      <planeGeometry args={[size[0], size[1], 8, 16]} />
-      <shaderMaterial
-        ref={matRef}
-        uniforms={uniforms}
-        vertexShader={WAVE_VERTEX}
-        fragmentShader={WAVE_FRAGMENT}
-        side={THREE.DoubleSide}
-      />
+      <planeGeometry args={[size[0], size[1]]} />
+      <meshBasicMaterial map={texture} side={THREE.DoubleSide} toneMapped={false} />
     </mesh>
   );
 }
@@ -185,12 +152,11 @@ function VerticalBanners() {
         const armEndX = b.side * (VERT_POLE_X - VERT_ARM_LENGTH);
         const bannerCenterY = VERT_POLE_HEIGHT - 0.3 - BANNER_HEIGHT / 2;
         return (
-          <WaveBanner
+          <FlatBanner
             key={i}
             position={[armEndX, bannerCenterY, b.z]}
             size={[BANNER_WIDTH, BANNER_HEIGHT]}
             texture={verticalTexture(b.kind)}
-            amplitude={0.06}
           />
         );
       })}

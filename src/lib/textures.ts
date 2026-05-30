@@ -379,27 +379,66 @@ export function getCombankVerticalBanner(): THREE.Texture {
   ctx.lineWidth = 1;
   ctx.strokeRect(18, 18, 220, 476);
 
-  // VESAK 2026 caption at the bottom (in CB navy)
-  ctx.fillStyle = '#003d7a';
-  ctx.font = 'bold 26px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('VESAK 2026', 128, 460);
-
   const tex = new THREE.CanvasTexture(canvas);
   tex.minFilter = THREE.LinearFilter;
   tex.magFilter = THREE.LinearFilter;
   _vertCombank = tex;
 
-  // The actual Combank logo paints onto the canvas once it loads. Until
-  // then the banner shows the cream backdrop + VESAK caption alone.
+  // Sinhala caption "ප්‍රධාන දායකත්වය" (main sponsor) at the bottom in CB navy.
+  // Sinhala shaping (ZWJ joiners like ප්‍ර) only renders correctly once
+  // Noto Sans Sinhala has actually loaded — drawing immediately with a
+  // generic sans-serif fallback produces broken glyphs — so we defer the
+  // draw to fonts.ready and bump the texture once the paint lands.
+  const drawCaption = () => {
+    const sinhalaVar = getComputedStyle(document.documentElement)
+      .getPropertyValue('--font-sinhala').trim();
+    const family = sinhalaVar
+      ? `${sinhalaVar}, "Noto Sans Sinhala", sans-serif`
+      : '"Noto Sans Sinhala", sans-serif';
+    ctx.fillStyle = '#003d7a';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    // Auto-shrink so the line never spills past the inner gold border.
+    const text = 'ප්‍රධාන දායකත්වය';
+    const maxWidth = 210;
+    let size = 26;
+    while (size > 14) {
+      ctx.font = `bold ${size}px ${family}`;
+      if (ctx.measureText(text).width <= maxWidth) break;
+      size -= 1;
+    }
+    ctx.fillText(text, 128, 460);
+    tex.needsUpdate = true;
+  };
+
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(drawCaption).catch(drawCaption);
+  } else {
+    drawCaption();
+  }
+
+  // The actual Combank logo paints onto the canvas once it loads. The logo
+  // is drawn rotated 90° CCW so the wordmark reads vertically up the banner
+  // (matching the printed-banner reference). Until the SVG loads, the
+  // banner shows the cream backdrop + Sinhala caption alone.
   const img = new Image();
   img.onload = () => {
-    const targetW = 200;
-    const targetH = (img.height / img.width) * targetW;
-    const x = (256 - targetW) / 2;
-    const y = 200 - targetH / 2; // centered above the VESAK caption
-    ctx.drawImage(img, x, y, targetW, targetH);
+    // Logo is natively wide. After CCW rotation, native WIDTH becomes the
+    // visible vertical extent on the banner, native HEIGHT becomes the
+    // horizontal extent.
+    const verticalExtent = 400;
+    const horizontalExtent = (img.height / img.width) * verticalExtent;
+    ctx.save();
+    ctx.translate(128, 225); // upper-center of the banner, clear of the caption
+    ctx.rotate(-Math.PI / 2);
+    ctx.drawImage(
+      img,
+      -verticalExtent / 2,
+      -horizontalExtent / 2,
+      verticalExtent,
+      horizontalExtent,
+    );
+    ctx.restore();
     tex.needsUpdate = true;
   };
   img.src = '/logo/Commercial_Bank_logo.svg';

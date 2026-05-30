@@ -43,10 +43,10 @@ export function Environment() {
   return (
     <>
       {/* Ambient light */}
-      <ambientLight intensity={0.4} color={0x281c20} />
+      <ambientLight intensity={0.65} color={0x281c20} />
 
       {/* Fog */}
-      <fogExp2 attach="fog" args={[0x06040c, 0.012]} />
+      <fogExp2 attach="fog" args={[0x141d3a, 0.008]} />
 
       {/* Hero moon at end of street */}
       <Moon />

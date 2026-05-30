@@ -2,12 +2,16 @@
 
 import { useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
 import { useAppStore, STREET_LENGTH } from '@/lib/store';
 
 /**
  * First-person walking camera.
  * Handles both auto and manual movement, plus drag-to-look.
+ *
+ * All velocities are delta-scaled to "frames at 60fps" so walking covers the
+ * same distance per second regardless of actual frame rate (30/45/60/90).
+ * Store reads inside useFrame use getState() so per-frame setPosition() does
+ * not trigger a React reconcile of this component.
  */
 export function WalkingCamera() {
   const { camera, gl } = useThree();
@@ -19,8 +23,6 @@ export function WalkingCamera() {
   const lastPointer = useRef({ x: 0, y: 0 });
   const manualVel = useRef(0);
   const keys = useRef<Record<string, boolean>>({});
-
-  const { position, walking, speed, mode, setPosition, setWalking, focusedLanternIdx } = useAppStore();
 
   // Pointer controls
   useEffect(() => {
@@ -63,16 +65,23 @@ export function WalkingCamera() {
   }, []);
 
   // Animation loop
-  useFrame(() => {
+  useFrame((_, delta) => {
+    const { position, walking, speed, mode, focusedLanternIdx, setPosition, setWalking } =
+      useAppStore.getState();
+
+    // dt = "frames at 60fps". All per-frame constants below were tuned for a
+    // 60fps clock; multiplying by dt makes them framerate-independent.
+    const dt = delta * 60;
+
     let pos = position;
 
     if (mode === 'auto' && walking && focusedLanternIdx === null) {
-      pos += speed;
+      pos += speed * dt;
     } else if (mode === 'manual') {
       let v = manualVel.current;
       if (keys.current['w'] || keys.current['arrowup']) v = 0.12;
       if (keys.current['s'] || keys.current['arrowdown']) v = -0.1;
-      pos += v;
+      pos += v * dt;
     }
 
     if (pos > STREET_LENGTH - 15) {
@@ -88,8 +97,11 @@ export function WalkingCamera() {
     camera.position.z = -pos;
     camera.position.y = 2.2;
 
-    dragYaw.current += (targetYaw.current - dragYaw.current) * 0.1;
-    dragPitch.current += (targetPitch.current - dragPitch.current) * 0.1;
+    // Framerate-independent exponential ease: at 60fps this resolves to the
+    // original 0.1 catch-up factor; at 30fps it doubles, etc.
+    const lookEase = 1 - Math.pow(0.9, dt);
+    dragYaw.current += (targetYaw.current - dragYaw.current) * lookEase;
+    dragPitch.current += (targetPitch.current - dragPitch.current) * lookEase;
 
     const lookX = Math.sin(dragYaw.current) * 5;
     const lookY = 2.2 + dragPitch.current * 5;

@@ -38,6 +38,7 @@ export function LandingScreen() {
           className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden px-6 py-10"
           style={{
             background: '#ffffff',
+            minHeight: '100svh',
             paddingTop: 'calc(2.5rem + var(--safe-top))',
             paddingBottom: 'calc(2.5rem + var(--safe-bottom))',
           }}
