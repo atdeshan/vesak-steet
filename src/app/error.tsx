@@ -34,7 +34,7 @@ export default function Error({
       </div>
       <div style={{ fontSize: '1rem', color: '#7a5a3a', marginBottom: '2rem', maxWidth: '32rem', lineHeight: 1.5 }}>
         Something went wrong while loading the experience.<br />
-        This may happen if your browser doesn't fully support 3D graphics, or if the connection dropped.
+        This may happen if your browser doesn&apos;t fully support 3D graphics, or if the connection dropped.
       </div>
       <button
         onClick={reset}
