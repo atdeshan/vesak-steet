@@ -51,13 +51,6 @@ export function ClosingScreen() {
             </button>
           </motion.div>
 
-          {/* Share */}
-          <motion.div variants={fadeUp} className="mt-8 flex gap-2">
-            <ShareButton platform="facebook" />
-            <ShareButton platform="twitter" />
-            <ShareButton platform="whatsapp" />
-          </motion.div>
-
           {/* Commercial Bank sign-off */}
           <motion.div
             variants={fadeUp}
@@ -81,33 +74,3 @@ export function ClosingScreen() {
   );
 }
 
-function ShareButton({ platform }: { platform: 'facebook' | 'twitter' | 'whatsapp' }) {
-  const url = typeof window !== 'undefined' ? window.location.href : 'https://vesakstreet.com';
-  const text = 'Vesak Lanterns of Colombo — virtual experience';
-
-  const links = {
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
-  };
-
-  const labels = {
-    facebook: 'f',
-    twitter: '𝕏',
-    whatsapp: 'W',
-  };
-
-  return (
-    <a
-      href={links[platform]}
-      target="_blank"
-      rel="noopener"
-      className="w-10 h-10 rounded-full border border-flame-300/25 text-flame-300
-                 hover:bg-flame-300/10 transition-colors
-                 flex items-center justify-center text-sm font-medium"
-      aria-label={`Share on ${platform}`}
-    >
-      {labels[platform]}
-    </a>
-  );
-}

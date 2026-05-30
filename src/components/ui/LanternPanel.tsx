@@ -9,6 +9,13 @@ import { COLOR_PALETTE } from '@/data/types';
 import { getVideoUrl } from '@/lib/config';
 
 /**
+ * TEMP: hide placeholder lantern names + descriptions until the real per-lantern
+ * content lands in src/data/lanterns.ts. Layout stays intact — only the text
+ * strings are blanked. Flip to `false` to re-enable when content arrives.
+ */
+const HIDE_PLACEHOLDER_CONTENT = true;
+
+/**
  * Side panel shown when a lantern is clicked.
  * Plays the lantern's video, shows the story in current language.
  *
@@ -48,17 +55,20 @@ export function LanternPanel() {
     return () => { document.body.style.overflow = prev; };
   }, [lantern]);
 
-  const name = lantern ? (
+  const rawName = lantern ? (
     language === 'si' ? lantern.name_si :
     language === 'ta' ? (lantern.name_ta ?? lantern.name) :
     lantern.name
   ) : '';
 
-  const story = lantern ? (
+  const rawStory = lantern ? (
     language === 'si' ? lantern.story_si :
     language === 'ta' ? (lantern.story_ta ?? lantern.story_en) :
     lantern.story_en
   ) : '';
+
+  const name = HIDE_PLACEHOLDER_CONTENT ? '' : rawName;
+  const story = HIDE_PLACEHOLDER_CONTENT ? '' : rawStory;
 
   const colorLabel = lantern ? COLOR_PALETTE[lantern.color].label : '';
   const sizeLabel = lantern ? t[`size_${lantern.size}` as const] : '';
@@ -140,7 +150,7 @@ export function LanternPanel() {
               </div>
 
               {/* Sinhala name (if not Sinhala mode) */}
-              {language !== 'si' && lantern.name_si && (
+              {!HIDE_PLACEHOLDER_CONTENT && language !== 'si' && lantern.name_si && (
                 <div className="font-serif italic text-flame-200/70 text-sm mb-3">
                   {lantern.name_si}
                 </div>

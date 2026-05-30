@@ -60,9 +60,9 @@ export function Controls() {
           </div>
         </motion.div>
 
-        {/* CENTER: mode toggle (desktop only) */}
+        {/* CENTER: mode toggle (desktop only — hidden on mobile + tablets) */}
         <motion.div
-          className="pointer-events-auto hidden gap-1 p-1 rounded-full control-pill absolute left-1/2 -translate-x-1/2 lg:flex"
+          className="pointer-events-auto hidden gap-1 p-1 rounded-full control-pill absolute left-1/2 -translate-x-1/2 xl:flex"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}

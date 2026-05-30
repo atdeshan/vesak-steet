@@ -2,6 +2,7 @@
 // Use https://tinypng.com to compress in place. Target: 150-300KB.
 import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond, Inter, Noto_Sans_Sinhala } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import '@/styles/globals.css';
 
 const display = Cormorant_Garamond({
@@ -49,7 +50,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${sinhala.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

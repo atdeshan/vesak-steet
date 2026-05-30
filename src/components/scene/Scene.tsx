@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { Environment } from './Environment';
 import { WalkingCamera } from './WalkingCamera';
 import { Lantern } from './Lantern';
@@ -59,6 +59,52 @@ export function Scene() {
   const perfHudVisible = usePerfStore((s) => s.visible);
 
   const lanternPositions = useMemo(() => getLanternPositions(), []);
+  const [contextLost, setContextLost] = useState(false);
+
+  // WebGL context can be lost (especially on iOS Safari after the tab is
+  // backgrounded for >30s). Show a refresh prompt rather than a black canvas.
+  if (contextLost) {
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          inset: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#050308',
+          color: '#fdf6e9',
+          padding: '2rem',
+          textAlign: 'center',
+          zIndex: 100,
+        }}
+      >
+        <div style={{ fontSize: '1.25rem', marginBottom: '0.5rem', opacity: 0.85 }}>
+          වෙසක් වීදිය
+        </div>
+        <div style={{ fontSize: '1rem', marginBottom: '2rem', opacity: 0.7, maxWidth: '24rem', lineHeight: 1.5 }}>
+          The lanterns went dim. Refresh to relight them.
+        </div>
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            padding: '0.875rem 2.5rem',
+            background: 'rgba(255,238,187,0.15)',
+            color: '#fdf6e9',
+            border: '1px solid rgba(255,238,187,0.3)',
+            borderRadius: '999px',
+            fontSize: '1rem',
+            cursor: 'pointer',
+            minHeight: '52px',
+            minWidth: '160px',
+          }}
+        >
+          Refresh
+        </button>
+      </div>
+    );
+  }
 
   return (
     <Canvas
@@ -66,6 +112,21 @@ export function Scene() {
       dpr={[1, settings.pixelRatioCap]}
       gl={{ antialias: settings.antialias, alpha: true, powerPreference: 'high-performance' }}
       style={{ background: '#0d1530', touchAction: 'none' }}
+      onCreated={(state) => {
+        const canvas = state.gl.domElement;
+        const onLost = (e: Event) => {
+          e.preventDefault();
+          // eslint-disable-next-line no-console
+          console.warn('WebGL context lost');
+          setContextLost(true);
+        };
+        const onRestored = () => {
+          // eslint-disable-next-line no-console
+          console.log('WebGL context restored');
+        };
+        canvas.addEventListener('webglcontextlost', onLost);
+        canvas.addEventListener('webglcontextrestored', onRestored);
+      }}
     >
       <Suspense fallback={null}>
         <StartupLog />
